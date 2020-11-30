@@ -1,41 +1,74 @@
 package id.ac.ui.cs.mobileprogramming.nct2020;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
 
-import id.ac.ui.cs.mobileprogramming.nct2020.ui.main.MainFragment;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
-    public int counter;
-    Button button;
-    TextView textView;
+    private WifiManager wifiManager;
+    private ListView listView;
+    private Button buttonScan;
+    private int size = 0;
+    private List<ScanResult> results;
+    private ArrayList<String> arrayList = new ArrayList<>();
+    private ArrayAdapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        button= (Button) findViewById(R.id.button);
-        textView= (TextView) findViewById(R.id.textView);
-        button.setOnClickListener(new View.OnClickListener()
-        {
+        buttonScan = findViewById(R.id.scanBtn);
+        buttonScan.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                new CountDownTimer(30000, 1000){
-                    public void onTick(long millisUntilFinished){
-                        textView.setText(String.valueOf(counter));
-                        counter++;
-                    }
-                    public  void onFinish(){
-                        textView.setText("FINISH!!");
-                    }
-                }.start();
+            public void onClick(View view) {
+                scanWifi();
             }
         });
+
+        listView = findViewById(R.id.wifiList);
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        if (!wifiManager.isWifiEnabled()) {
+            Toast.makeText(this, "WiFi is disabled ... We need to enable it", Toast.LENGTH_LONG).show();
+            wifiManager.setWifiEnabled(true);
+        }
+
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrayList);
+        listView.setAdapter(adapter);
+        scanWifi();
     }
+
+    private void scanWifi() {
+        arrayList.clear();
+        registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        wifiManager.startScan();
+        Toast.makeText(this, "Scanning WiFi ...", Toast.LENGTH_SHORT).show();
+    }
+
+    BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            results = wifiManager.getScanResults();
+            unregisterReceiver(this);
+
+            for (ScanResult scanResult : results) {
+                arrayList.add(scanResult.SSID + " - " + scanResult.capabilities);
+                adapter.notifyDataSetChanged();
+            }
+        };
+    };
 }

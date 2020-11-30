@@ -1,36 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="10dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/message"
+    <ListView
+        android:id="@+id/wifiList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:hint="Enter your first pick in NCT!"
-        android:inputType="text"
-         />
+        android:layout_height="312dp"
+        android:layout_weight="0.97"/>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="158dp"
-        android:id="@+id/button"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textStyle="bold|italic" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:textAppearance="?android:autoSizeTextType"
-        android:textSize="20sp" />
+        android:id="@+id/scanBtn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:layout_margin="15dp"
+        android:background="@android:color/holo_red_light"
+        android:text="Scan WiFi"/>
 
 </LinearLayout>
